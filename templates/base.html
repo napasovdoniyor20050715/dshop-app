@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}D_Shop{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg:           #07101f;
+            --surface:      #0c1828;
+            --card:         rgba(255,255,255,0.04);
+            --card-solid:   #111e33;
+            --card-light:   #162440;
+            --accent:       #e8374a;
+            --accent2:      #ff6070;
+            --blue:         #5b9aff;
+            --blue2:        #82b4ff;
+            --purple:       #a78bfa;
+            --price:        #7dd3fc;
+            --price2:       #a5b4fc;
+            --text:         #e8f0ff;
+            --text2:        #c4d0f0;
+            --muted:        #5a6e90;
+            --border:       rgba(91,154,255,0.13);
+            --border2:      rgba(91,154,255,0.22);
+            --ws:           rgba(255,255,255,0.04);
+            --ws2:          rgba(255,255,255,0.07);
+            --success:      #34d399;
+            --warning:      #fbbf24;
+            --info:         #60a5fa;
+            --radius:       14px;
+            --radius-sm:    9px;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse 80% 60% at 20% -10%, rgba(91,154,255,0.1) 0%, transparent 55%),
+                radial-gradient(ellipse 60% 50% at 80% 110%, rgba(167,139,250,0.07) 0%, transparent 50%);
+        }
+
+        /* ── NAVBAR ── */
+        nav {
+            background: rgba(7,16,31,0.9);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border2);
+            padding: 0 2rem;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 66px;
+        }
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem; font-weight: 800;
+            color: var(--text); text-decoration: none; letter-spacing: -0.5px;
+        }
+        .logo .logo-d {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .logo .logo-shop { color: var(--text2); }
+
+        .nav-links { display: flex; align-items: center; gap: 0.3rem; list-style: none; }
+        .nav-links a {
+            color: var(--muted); text-decoration: none;
+            padding: 0.45rem 0.9rem; border-radius: var(--radius-sm);
+            font-size: 0.87rem; font-weight: 500; transition: all 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); background: var(--ws2); }
+
+        .nav-cart {
+            background: var(--accent) !important; color: #fff !important;
+            padding: 0.45rem 1.1rem !important; border-radius: var(--radius-sm) !important;
+            display: flex !important; align-items: center; gap: 0.4rem;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 18px rgba(232,55,74,0.3);
+            transition: all 0.2s !important;
+        }
+        .nav-cart:hover {
+            background: var(--accent2) !important;
+            box-shadow: 0 6px 26px rgba(232,55,74,0.45) !important;
+            transform: translateY(-1px);
+        }
+        .cart-badge {
+            background: white; color: var(--accent);
+            width: 19px; height: 19px; border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 700;
+        }
+
+        /* ── FLASH ── */
+        .flash-messages {
+            max-width: 1200px; margin: 1rem auto 0; padding: 0 2rem;
+        }
+        .flash {
+            padding: 0.75rem 1.1rem; border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem; font-size: 0.88rem; font-weight: 500;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .flash.success {
+            background: rgba(52,211,153,0.1);
+            border: 1px solid rgba(52,211,153,0.25); color: var(--success);
+        }
+        .flash.error {
+            background: rgba(232,55,74,0.1);
+            border: 1px solid rgba(232,55,74,0.3); color: var(--accent2);
+        }
+
+        /* ── MAIN ── */
+        main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        /* ── BUTTONS ── */
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.65rem 1.4rem; border-radius: var(--radius-sm);
+            font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.88rem;
+            cursor: pointer; text-decoration: none; border: none; transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white; box-shadow: 0 4px 20px rgba(37,99,235,0.4);
+        }
+        .btn-primary:hover {
+            box-shadow: 0 6px 30px rgba(37,99,235,0.55); transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: var(--ws2); color: var(--text2);
+            border: 1px solid var(--border2);
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+        .btn-danger { background: #c0392b; color: white; }
+        .btn-danger:hover { background: #e74c3c; }
+
+        .btn-success {
+            background: rgba(52,211,153,0.12); color: var(--success);
+            border: 1px solid rgba(52,211,153,0.3);
+        }
+        .btn-success:hover { background: rgba(52,211,153,0.22); }
+
+        .btn-sm { padding: 0.38rem 0.85rem; font-size: 0.8rem; }
+
+        /* ── CARD ── */
+        .card {
+            background: var(--ws);
+            border: 1px solid var(--border2);
+            border-radius: var(--radius); padding: 1.5rem;
+        }
+
+        /* ── FORMS ── */
+        .form-group { margin-bottom: 1.1rem; }
+        .form-group label {
+            display: block; margin-bottom: 0.4rem;
+            font-size: 0.75rem; font-weight: 600; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .form-control {
+            width: 100%; padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border2);
+            border-radius: var(--radius-sm);
+            color: var(--text); font-size: 0.92rem; font-family: 'DM Sans', sans-serif;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: rgba(91,154,255,0.5);
+            background: rgba(255,255,255,0.07);
+        }
+        select.form-control option { background: var(--card-solid); }
+
+        /* ── TABLES ── */
+        .table-wrap {
+            overflow-x: auto; border-radius: var(--radius);
+            border: 1px solid var(--border2);
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 0.9rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th {
+            background: rgba(255,255,255,0.03);
+            font-size: 0.75rem; color: var(--muted);
+            font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        td { font-size: 0.88rem; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--ws); }
+
+        /* ── BADGES ── */
+        .badge {
+            display: inline-flex; padding: 0.25rem 0.75rem;
+            border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+        }
+        .badge-pending  { background: rgba(251,191,36,0.12);  color: var(--warning); }
+        .badge-confirmed{ background: rgba(91,154,255,0.12);  color: var(--blue2); }
+        .badge-delivered{ background: rgba(52,211,153,0.12);  color: var(--success); }
+        .badge-admin    { background: rgba(167,139,250,0.15); color: var(--purple); }
+        .badge-user     { background: rgba(255,255,255,0.06); color: var(--muted); }
+
+        /* ── PAGE HEADER ── */
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.7rem; font-weight: 800; margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+        .page-title span { color: var(--blue2); }
+        .page-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 1.5rem;
+        }
+
+        /* ── PRICE COLORS ── */
+        .price-new {
+            font-family: 'Syne', sans-serif; font-weight: 700;
+            background: linear-gradient(135deg, #7dd3fc, #a5b4fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .price-old {
+            font-size: 0.8rem; color: var(--accent);
+            text-decoration: line-through; opacity: 0.8; margin-left: 0.3rem;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            text-align: center; padding: 1.4rem;
+            color: var(--muted); font-size: 0.82rem; margin-top: 4rem;
+        }
+        footer strong {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+            <a href="{{ url_for('index') }}" class="logo">
+                <span class="logo-d">D_</span><span class="logo-shop">Shop</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}">Bosh sahifa</a></li>
+                <li><a href="{{ url_for('products') }}">Mahsulotlar</a></li>
+                {% if session.user_id %}
+                    <li><a href="{{ url_for('my_orders') }}">Buyurtmalarim</a></li>
+                    {% if session.role == 'admin' %}
+                        <li><a href="{{ url_for('admin_dashboard') }}" style="color:var(--purple);">⚡ Admin</a></li>
+                    {% endif %}
+                    <li>
+                        <a href="{{ url_for('cart') }}" class="nav-cart">
+                            🛒 Savat
+                            {% set cart_count = session.get('cart', {})|length %}
+                            <span class="cart-badge">{{ cart_count }}</span>
+                        </a>
+                    </li>
+                    <li><a href="{{ url_for('logout') }}">Chiqish ({{ session.username }})</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Kirish</a></li>
+                    <li><a href="{{ url_for('register') }}" class="nav-cart">Ro'yxat</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main>{% block content %}{% endblock %}</main>
+
+    <footer>
+        &copy; 2026 <strong>D_Shop</strong> — Samarqand, O'zbekiston
+    </footer>
+</body>
+</html>

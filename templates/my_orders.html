@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Buyurtmalarim — D_Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+.order-card {
+    background: var(--ws);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1.3rem; margin-bottom: 0.9rem;
+    transition: border-color 0.2s;
+}
+.order-card:hover { border-color: var(--border2); }
+.order-header {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 0.7rem;
+}
+.order-id {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem;
+}
+.order-date { font-size: 0.78rem; color: var(--muted); margin-top: 0.15rem; }
+.order-items { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.7rem; line-height: 1.5; }
+.order-footer { display: flex; justify-content: space-between; align-items: center; }
+.order-addr { font-size: 0.8rem; color: var(--muted); }
+.order-total {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem;
+    background: linear-gradient(135deg, #7dd3fc, #a5b4fc);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.empty { text-align: center; padding: 4rem; }
+.empty-icon { font-size: 4rem; margin-bottom: 1rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Mening buyurtmalarim</h1>
+    <a href="{{ url_for('products') }}" class="btn btn-primary">+ Xarid qilish</a>
+</div>
+
+{% if orders %}
+    {% for order in orders %}
+    <div class="order-card">
+        <div class="order-header">
+            <div>
+                <div class="order-id">Buyurtma #{{ order.id }}</div>
+                <div class="order-date">📅 {{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+            </div>
+            <span class="badge badge-{{ order.status }}">
+                {% if order.status == 'pending' %}⏳ Kutilmoqda
+                {% elif order.status == 'confirmed' %}✅ Qabul qilindi
+                {% else %}🚚 Yetkazildi{% endif %}
+            </span>
+        </div>
+        <div class="order-items">
+            {% for item in order.items %}
+                {{ item.product_icon }} {{ item.product_name }} × {{ item.quantity }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </div>
+        <div class="order-footer">
+            <div class="order-addr">📍 {{ order.customer_address[:50] }}{% if order.customer_address|length > 50 %}...{% endif %}</div>
+            <div class="order-total">{{ format_price(order.total) }} so'm</div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+<div class="empty">
+    <div class="empty-icon">📋</div>
+    <p style="color:var(--muted);margin-bottom:1.5rem;">Hali buyurtma yo'q</p>
+    <a href="{{ url_for('products') }}" class="btn btn-primary">Xarid qilish →</a>
+</div>
+{% endif %}
+{% endblock %}

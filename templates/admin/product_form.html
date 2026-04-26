@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}{% if product %}Tahrirlash{% else %}Qo'shish{% endif %} — Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+.admin-nav {
+    display: flex; gap: 0.4rem; margin-bottom: 2rem;
+    background: var(--ws); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 0.5rem;
+}
+.admin-nav a {
+    padding: 0.5rem 1.1rem; border-radius: 8px;
+    color: var(--muted); text-decoration: none;
+    font-size: 0.87rem; font-weight: 500; transition: all 0.2s;
+}
+.admin-nav a:hover { color: var(--text); background: var(--ws2); }
+.admin-nav a.active {
+    background: linear-gradient(135deg, rgba(91,154,255,0.2), rgba(167,139,250,0.15));
+    border: 1px solid rgba(91,154,255,0.3); color: var(--blue2);
+}
+.form-card { max-width: 540px; }
+.submit-btn {
+    padding: 0.7rem 1.8rem;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    border: none; border-radius: var(--radius-sm);
+    color: white; font-size: 0.92rem; font-weight: 700;
+    font-family: 'Syne', sans-serif; cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(37,99,235,0.4);
+}
+.submit-btn:hover { box-shadow: 0 6px 30px rgba(37,99,235,0.55); transform: translateY(-1px); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-nav">
+    <a href="{{ url_for('admin_dashboard') }}">📊 Dashboard</a>
+    <a href="{{ url_for('admin_products') }}" class="active">📦 Mahsulotlar</a>
+    <a href="{{ url_for('admin_orders') }}">📋 Buyurtmalar</a>
+    <a href="{{ url_for('admin_users') }}">👥 Foydalanuvchilar</a>
+</div>
+
+<div class="page-header">
+    <h1 class="page-title">{% if product %}✏️ Mahsulotni tahrirlash{% else %}+ Yangi mahsulot{% endif %}</h1>
+    <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">← Orqaga</a>
+</div>
+
+<div class="card form-card">
+    <form method="POST">
+        <div class="form-group">
+            <label>Mahsulot nomi</label>
+            <input type="text" name="name" class="form-control" value="{{ product.name if product else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label>Kategoriya</label>
+            <select name="category" class="form-control" required>
+                <option value="electronics" {% if product and product.category == 'electronics' %}selected{% endif %}>📱 Elektronika</option>
+                <option value="clothing"    {% if product and product.category == 'clothing'    %}selected{% endif %}>👕 Kiyim-kechak</option>
+                <option value="accessories" {% if product and product.category == 'accessories' %}selected{% endif %}>🕶️ Aksessuarlar</option>
+                <option value="home"        {% if product and product.category == 'home'        %}selected{% endif %}>🏠 Uy-ro'zg'or</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Narx (so'm)</label>
+            <input type="number" name="price" class="form-control" value="{{ product.price if product else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label>Eski narx (ixtiyoriy)</label>
+            <input type="number" name="old_price" class="form-control" value="{{ product.old_price if product and product.old_price else '' }}">
+        </div>
+        <div class="form-group">
+            <label>Ikon (emoji)</label>
+            <input type="text" name="icon" class="form-control" value="{{ product.icon if product else '📦' }}" placeholder="📱" required>
+        </div>
+        <div class="form-group">
+            <label>Tavsif</label>
+            <textarea name="description" class="form-control" rows="3">{{ product.description if product else '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label>Zaxira (dona)</label>
+            <input type="number" name="stock" class="form-control" value="{{ product.stock if product else 100 }}" required>
+        </div>
+        <div style="display:flex;gap:0.8rem;margin-top:0.5rem;">
+            <button type="submit" class="submit-btn">✅ Saqlash</button>
+            <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">Bekor qilish</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

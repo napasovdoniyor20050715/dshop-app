@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Foydalanuvchilar — Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+.admin-nav {
+    display: flex; gap: 0.4rem; margin-bottom: 2rem;
+    background: var(--ws); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 0.5rem;
+}
+.admin-nav a {
+    padding: 0.5rem 1.1rem; border-radius: 8px;
+    color: var(--muted); text-decoration: none;
+    font-size: 0.87rem; font-weight: 500; transition: all 0.2s;
+}
+.admin-nav a:hover { color: var(--text); background: var(--ws2); }
+.admin-nav a.active {
+    background: linear-gradient(135deg, rgba(91,154,255,0.2), rgba(167,139,250,0.15));
+    border: 1px solid rgba(91,154,255,0.3); color: var(--blue2);
+}
+.avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, #5b9aff, #a78bfa);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 700; color: white;
+    margin-right: 0.6rem; vertical-align: middle;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-nav">
+    <a href="{{ url_for('admin_dashboard') }}">📊 Dashboard</a>
+    <a href="{{ url_for('admin_products') }}">📦 Mahsulotlar</a>
+    <a href="{{ url_for('admin_orders') }}">📋 Buyurtmalar</a>
+    <a href="{{ url_for('admin_users') }}" class="active">👥 Foydalanuvchilar</a>
+</div>
+
+<h1 class="page-title">👥 Foydalanuvchilar</h1>
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th><th>Foydalanuvchi</th><th>Email</th><th>Rol</th><th>Sana</th><th>Buyurtmalar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td style="color:var(--muted);">{{ user.id }}</td>
+                <td>
+                    <span class="avatar">{{ user.username[0].upper() }}</span>
+                    <strong>{{ user.username }}</strong>
+                </td>
+                <td style="color:var(--muted);font-size:0.85rem;">{{ user.email }}</td>
+                <td><span class="badge badge-{{ user.role }}">
+                    {% if user.role == 'admin' %}⚡ Admin{% else %}👤 User{% endif %}
+                </span></td>
+                <td style="color:var(--muted);font-size:0.82rem;">{{ user.created_at.strftime('%d.%m.%Y') }}</td>
+                <td style="color:var(--blue2);font-weight:600;">{{ user.orders|length }} ta</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

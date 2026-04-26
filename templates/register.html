@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Ro'yxatdan o'tish — D_Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+.auth-wrap {
+    min-height: 80vh;
+    display: flex; align-items: center; justify-content: center;
+}
+.auth-card {
+    background: var(--ws);
+    border: 1px solid var(--border2);
+    border-radius: 20px; padding: 2.5rem;
+    width: 100%; max-width: 420px;
+}
+.auth-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.9rem; font-weight: 800; margin-bottom: 0.4rem;
+}
+.auth-logo .logo-d {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.auth-logo .logo-shop { color: var(--text2); }
+.auth-subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+.auth-submit {
+    width: 100%; padding: 0.8rem;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    border: none; border-radius: var(--radius-sm);
+    color: white; font-size: 0.95rem; font-weight: 700;
+    font-family: 'Syne', sans-serif;
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(37,99,235,0.4);
+    margin-top: 0.3rem;
+}
+.auth-submit:hover {
+    box-shadow: 0 6px 30px rgba(37,99,235,0.55); transform: translateY(-1px);
+}
+.auth-link {
+    text-align: center; margin-top: 1.4rem;
+    font-size: 0.87rem; color: var(--muted);
+}
+.auth-link a { color: var(--blue2); text-decoration: none; font-weight: 500; }
+.auth-link a:hover { color: var(--purple); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <span class="logo-d">D_</span><span class="logo-shop">Shop</span>
+        </div>
+        <p class="auth-subtitle">Yangi hisob yaratish</p>
+
+        <form method="POST">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" class="form-control" placeholder="username" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" class="form-control" placeholder="email@gmail.com" required>
+            </div>
+            <div class="form-group">
+                <label>Parol</label>
+                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <div class="form-group">
+                <label>Parolni tasdiqlang</label>
+                <input type="password" name="confirm_password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="auth-submit">Ro'yxatdan o'tish →</button>
+        </form>
+
+        <div class="auth-link">
+            Hisobingiz bormi? <a href="{{ url_for('login') }}">Kiring</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

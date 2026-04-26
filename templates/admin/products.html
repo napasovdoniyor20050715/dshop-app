@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Mahsulotlar — Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+.admin-nav {
+    display: flex; gap: 0.4rem; margin-bottom: 2rem;
+    background: var(--ws); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 0.5rem;
+}
+.admin-nav a {
+    padding: 0.5rem 1.1rem; border-radius: 8px;
+    color: var(--muted); text-decoration: none;
+    font-size: 0.87rem; font-weight: 500; transition: all 0.2s;
+}
+.admin-nav a:hover { color: var(--text); background: var(--ws2); }
+.admin-nav a.active {
+    background: linear-gradient(135deg, rgba(91,154,255,0.2), rgba(167,139,250,0.15));
+    border: 1px solid rgba(91,154,255,0.3); color: var(--blue2);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-nav">
+    <a href="{{ url_for('admin_dashboard') }}">📊 Dashboard</a>
+    <a href="{{ url_for('admin_products') }}" class="active">📦 Mahsulotlar</a>
+    <a href="{{ url_for('admin_orders') }}">📋 Buyurtmalar</a>
+    <a href="{{ url_for('admin_users') }}">👥 Foydalanuvchilar</a>
+</div>
+
+<div class="page-header">
+    <h1 class="page-title">📦 Mahsulotlar</h1>
+    <a href="{{ url_for('admin_add_product') }}" class="btn btn-primary">+ Mahsulot qo'shish</a>
+</div>
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th><th>Mahsulot</th><th>Kategoriya</th><th>Narx</th><th>Zaxira</th><th>Amallar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in products %}
+            <tr>
+                <td style="color:var(--muted);">{{ p.id }}</td>
+                <td><span style="font-size:1.2rem;margin-right:0.4rem;">{{ p.icon }}</span>{{ p.name }}</td>
+                <td><span class="badge badge-user">{{ p.category }}</span></td>
+                <td class="price-new" style="font-size:0.88rem;">{{ format_price(p.price) }}</td>
+                <td style="color:var(--muted);">{{ p.stock }}</td>
+                <td>
+                    <div style="display:flex;gap:0.4rem;">
+                        <a href="{{ url_for('admin_edit_product', product_id=p.id) }}" class="btn btn-secondary btn-sm">✏️ Tahrir</a>
+                        <form method="POST" action="{{ url_for('admin_delete_product', product_id=p.id) }}" style="display:inline;" onsubmit="return confirm('O\'chirishni xohlaysizmi?')">
+                            <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

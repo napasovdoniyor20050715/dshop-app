@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Buyurtma — D_Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+.checkout-layout {
+    display: grid; grid-template-columns: 1fr 290px;
+    gap: 1.5rem; align-items: start;
+}
+.section-label {
+    font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+    margin-bottom: 1.3rem;
+}
+.order-row {
+    display: flex; justify-content: space-between;
+    padding: 0.5rem 0; border-bottom: 1px solid var(--border);
+    font-size: 0.87rem;
+}
+.order-row:last-of-type { border-bottom: none; }
+.order-row span:first-child { color: var(--muted); }
+.order-total {
+    display: flex; justify-content: space-between;
+    padding: 0.9rem 0 0; font-weight: 700; font-size: 1rem;
+}
+.order-total span:last-child {
+    background: linear-gradient(135deg, #7dd3fc, #a5b4fc);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; font-family: 'Syne', sans-serif;
+}
+.submit-btn {
+    width: 100%; padding: 0.8rem; margin-top: 1.2rem;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    border: none; border-radius: var(--radius-sm);
+    color: white; font-size: 0.92rem; font-weight: 700;
+    font-family: 'Syne', sans-serif; cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(37,99,235,0.4);
+}
+.submit-btn:hover {
+    box-shadow: 0 6px 30px rgba(37,99,235,0.55); transform: translateY(-1px);
+}
+@media(max-width:700px){ .checkout-layout { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Buyurtmani rasmiylashtirish</h1>
+    <a href="{{ url_for('cart') }}" class="btn btn-secondary">← Savatga qaytish</a>
+</div>
+
+<div class="checkout-layout">
+    <div class="card">
+        <div class="section-label">📍 Yetkazib berish ma'lumotlari</div>
+        <form method="POST">
+            <div class="form-group">
+                <label>To'liq ism</label>
+                <input type="text" name="name" class="form-control" placeholder="Ism Familiya" required>
+            </div>
+            <div class="form-group">
+                <label>Telefon raqam</label>
+                <input type="tel" name="phone" class="form-control" placeholder="+998 90 123 45 67" required>
+            </div>
+            <div class="form-group">
+                <label>Yetkazib berish manzili</label>
+                <textarea name="address" class="form-control" rows="3" placeholder="Shahar, ko'cha, uy raqami" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">✅ Buyurtmani tasdiqlash</button>
+        </form>
+    </div>
+
+    <div class="card" style="position:sticky;top:80px;">
+        <div class="section-label">🧾 Buyurtmangiz</div>
+        {% for item in items %}
+        <div class="order-row">
+            <span>{{ item.product.icon }} {{ item.product.name }} × {{ item.quantity }}</span>
+            <span>{{ format_price(item.product.price * item.quantity) }}</span>
+        </div>
+        {% endfor %}
+        <div class="order-total">
+            <span>Jami:</span>
+            <span>{{ format_price(total) }} so'm</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

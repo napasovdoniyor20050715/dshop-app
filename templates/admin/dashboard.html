@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — D_Shop Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+.admin-nav {
+    display: flex; gap: 0.4rem; margin-bottom: 2rem;
+    background: var(--ws); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 0.5rem;
+}
+.admin-nav a {
+    padding: 0.5rem 1.1rem; border-radius: 8px;
+    color: var(--muted); text-decoration: none;
+    font-size: 0.87rem; font-weight: 500; transition: all 0.2s;
+}
+.admin-nav a:hover { color: var(--text); background: var(--ws2); }
+.admin-nav a.active {
+    background: linear-gradient(135deg, rgba(91,154,255,0.2), rgba(167,139,250,0.15));
+    border: 1px solid rgba(91,154,255,0.3); color: var(--blue2);
+}
+.stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1rem; margin-bottom: 2rem;
+}
+.stat-card {
+    background: var(--ws); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.3rem 1.5rem;
+    position: relative; overflow: hidden;
+}
+.stat-card::after {
+    content: ''; position: absolute; top: -20px; right: -20px;
+    width: 70px; height: 70px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(91,154,255,0.08), transparent 70%);
+}
+.stat-icon { font-size: 1.6rem; margin-bottom: 0.6rem; }
+.stat-num {
+    font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.stat-num.warn { background: linear-gradient(135deg, #fbbf24, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.stat-num.green { background: linear-gradient(135deg, #34d399, #059669); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+@media(max-width:700px){ .stats-grid { grid-template-columns: repeat(2,1fr); } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-nav">
+    <a href="{{ url_for('admin_dashboard') }}" class="active">📊 Dashboard</a>
+    <a href="{{ url_for('admin_products') }}">📦 Mahsulotlar</a>
+    <a href="{{ url_for('admin_orders') }}">📋 Buyurtmalar</a>
+    <a href="{{ url_for('admin_users') }}">👥 Foydalanuvchilar</a>
+</div>
+
+<div class="page-header">
+    <h1 class="page-title">⚡ Admin <span>Panel</span></h1>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-num">{{ total_products }}</div>
+        <div class="stat-label">Mahsulotlar</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-num">{{ total_orders }}</div>
+        <div class="stat-label">Jami buyurtmalar</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-num green">{{ total_users }}</div>
+        <div class="stat-label">Foydalanuvchilar</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-num warn">{{ pending_orders }}</div>
+        <div class="stat-label">Kutilayotgan</div>
+    </div>
+</div>
+
+<h2 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:1rem;">So'nggi buyurtmalar</h2>
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th><th>Mijoz</th><th>Summa</th><th>Holat</th><th>Sana</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in recent_orders %}
+            <tr>
+                <td>#{{ order.id }}</td>
+                <td>{{ order.customer_name }}<br><small style="color:var(--muted);">{{ order.customer_phone }}</small></td>
+                <td class="price-new" style="font-size:0.88rem;">{{ format_price(order.total) }} so'm</td>
+                <td><span class="badge badge-{{ order.status }}">
+                    {% if order.status == 'pending' %}⏳ Kutilmoqda
+                    {% elif order.status == 'confirmed' %}✅ Qabul
+                    {% else %}🚚 Yetkazildi{% endif %}
+                </span></td>
+                <td style="color:var(--muted);font-size:0.82rem;">{{ order.created_at.strftime('%d.%m.%Y') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

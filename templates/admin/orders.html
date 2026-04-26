@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Buyurtmalar — Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+.admin-nav {
+    display: flex; gap: 0.4rem; margin-bottom: 2rem;
+    background: var(--ws); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 0.5rem;
+}
+.admin-nav a {
+    padding: 0.5rem 1.1rem; border-radius: 8px;
+    color: var(--muted); text-decoration: none;
+    font-size: 0.87rem; font-weight: 500; transition: all 0.2s;
+}
+.admin-nav a:hover { color: var(--text); background: var(--ws2); }
+.admin-nav a.active {
+    background: linear-gradient(135deg, rgba(91,154,255,0.2), rgba(167,139,250,0.15));
+    border: 1px solid rgba(91,154,255,0.3); color: var(--blue2);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-nav">
+    <a href="{{ url_for('admin_dashboard') }}">📊 Dashboard</a>
+    <a href="{{ url_for('admin_products') }}">📦 Mahsulotlar</a>
+    <a href="{{ url_for('admin_orders') }}" class="active">📋 Buyurtmalar</a>
+    <a href="{{ url_for('admin_users') }}">👥 Foydalanuvchilar</a>
+</div>
+
+<h1 class="page-title">📋 Buyurtmalar</h1>
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th><th>Mijoz</th><th>Mahsulotlar</th><th>Summa</th><th>Holat</th><th>Sana</th><th>Amallar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td style="color:var(--muted);">#{{ order.id }}</td>
+                <td>
+                    <strong>{{ order.customer_name }}</strong><br>
+                    <small style="color:var(--muted);">{{ order.customer_phone }}</small>
+                </td>
+                <td style="max-width:180px;font-size:0.82rem;color:var(--muted);">
+                    {% for item in order.items %}{{ item.product_icon }} {{ item.product_name }} ×{{ item.quantity }}{% if not loop.last %}, {% endif %}{% endfor %}
+                </td>
+                <td class="price-new" style="font-size:0.88rem;white-space:nowrap;">{{ format_price(order.total) }} so'm</td>
+                <td><span class="badge badge-{{ order.status }}">
+                    {% if order.status == 'pending' %}⏳ Kutilmoqda
+                    {% elif order.status == 'confirmed' %}✅ Qabul
+                    {% else %}🚚 Yetkazildi{% endif %}
+                </span></td>
+                <td style="color:var(--muted);font-size:0.82rem;">{{ order.created_at.strftime('%d.%m.%Y') }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('admin_update_order', order_id=order.id) }}" style="display:flex;gap:0.3rem;flex-wrap:wrap;">
+                        {% if order.status == 'pending' %}
+                        <button name="status" value="confirmed" class="btn btn-success btn-sm">✅ Qabul</button>
+                        {% endif %}
+                        {% if order.status != 'delivered' %}
+                        <button name="status" value="delivered" class="btn btn-secondary btn-sm">🚚 Yetkazildi</button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

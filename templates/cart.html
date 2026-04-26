@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Savat — D_Shop{% endblock %}
+
+{% block extra_css %}
+<style>
+.cart-layout {
+    display: grid; grid-template-columns: 1fr 300px;
+    gap: 1.5rem; align-items: start;
+}
+.cart-item {
+    display: flex; gap: 1rem; padding: 1.2rem 0;
+    border-bottom: 1px solid var(--border); align-items: center;
+}
+.cart-item:last-child { border-bottom: none; }
+.item-icon {
+    width: 68px; height: 68px; flex-shrink: 0;
+    background: linear-gradient(145deg, #0c1828, #162440);
+    border: 1px solid var(--border); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.9rem;
+}
+.item-info { flex: 1; }
+.item-name { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.3rem; }
+.item-price {
+    font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700;
+    background: linear-gradient(135deg, #7dd3fc, #a5b4fc);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.qty-row { display: flex; align-items: center; gap: 0.5rem; }
+.qty-btn {
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 1px solid var(--border2); background: var(--ws2);
+    color: var(--text); font-size: 1.1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+}
+.qty-btn:hover { background: rgba(91,154,255,0.2); border-color: rgba(91,154,255,0.4); }
+.qty-num { min-width: 24px; text-align: center; font-weight: 600; font-size: 0.92rem; }
+.remove-btn {
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 1px solid rgba(232,55,74,0.2); background: rgba(232,55,74,0.08);
+    color: var(--accent); font-size: 1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+    text-decoration: none;
+}
+.remove-btn:hover { background: rgba(232,55,74,0.18); }
+
+.summary-card {
+    background: var(--ws);
+    border: 1px solid var(--border2); border-radius: var(--radius);
+    padding: 1.5rem; position: sticky; top: 80px;
+}
+.summary-title {
+    font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+    margin-bottom: 1.1rem;
+}
+.summary-row {
+    display: flex; justify-content: space-between;
+    padding: 0.45rem 0; font-size: 0.85rem; color: var(--muted);
+}
+.summary-divider { border: none; border-top: 1px solid var(--border); margin: 0.8rem 0; }
+.summary-total {
+    display: flex; justify-content: space-between;
+    font-weight: 700; font-size: 1rem;
+}
+.summary-total span:last-child {
+    background: linear-gradient(135deg, #7dd3fc, #a5b4fc);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'Syne', sans-serif;
+}
+.checkout-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; margin-top: 1.2rem; padding: 0.8rem;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    border: none; border-radius: var(--radius-sm);
+    color: white; font-size: 0.92rem; font-weight: 700;
+    font-family: 'Syne', sans-serif; cursor: pointer;
+    text-decoration: none; transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(91,154,255,0.3);
+}
+.checkout-btn:hover {
+    box-shadow: 0 6px 30px rgba(91,154,255,0.5); transform: translateY(-1px);
+}
+.empty { text-align: center; padding: 4rem; }
+.empty-icon { font-size: 4rem; margin-bottom: 1rem; }
+@media(max-width:700px){ .cart-layout { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">🛒 Savat</h1>
+
+{% if items %}
+<div class="cart-layout">
+    <div class="card">
+        {% for item in items %}
+        <div class="cart-item">
+            <div class="item-icon">{{ item.product.icon }}</div>
+            <div class="item-info">
+                <div class="item-name">{{ item.product.name }}</div>
+                <div class="item-price">{{ format_price(item.product.price) }} so'm</div>
+            </div>
+            <div class="qty-row">
+                <form method="POST" action="{{ url_for('update_cart') }}">
+                    <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                    <input type="hidden" name="action" value="decrease">
+                    <button type="submit" class="qty-btn">−</button>
+                </form>
+                <span class="qty-num">{{ item.quantity }}</span>
+                <form method="POST" action="{{ url_for('update_cart') }}">
+                    <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                    <input type="hidden" name="action" value="increase">
+                    <button type="submit" class="qty-btn">+</button>
+                </form>
+                <a href="{{ url_for('remove_from_cart', product_id=item.product.id) }}" class="remove-btn" onclick="return confirm('O\'chirishni xohlaysizmi?')">✕</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-title">Buyurtma xulosasi</div>
+        {% for item in items %}
+        <div class="summary-row">
+            <span>{{ item.product.name }} × {{ item.quantity }}</span>
+            <span>{{ format_price(item.subtotal) }}</span>
+        </div>
+        {% endfor %}
+        <hr class="summary-divider">
+        <div class="summary-total">
+            <span>Jami:</span>
+            <span>{{ format_price(total) }} so'm</span>
+        </div>
+        <a href="{{ url_for('checkout') }}" class="checkout-btn">Buyurtma berish →</a>
+    </div>
+</div>
+
+{% else %}
+<div class="empty">
+    <div class="empty-icon">🛒</div>
+    <p style="color:var(--muted);margin-bottom:1.5rem;">Savat bo'sh</p>
+    <a href="{{ url_for('products') }}" class="btn btn-primary">Xarid qilish →</a>
+</div>
+{% endif %}
+{% endblock %}
