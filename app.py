@@ -161,7 +161,7 @@ def logout():
 @app.route('/change-admin-pass')
 def change_admin_pass():
     user = User.query.filter_by(username='admin').first()
-    user.password = generate_password_hash('YangiParol123')
+    user.password = generate_password_hash('D000rC0der05')
     db.session.commit()
     return 'Parol almashtirildi!'
 # shu yergacha
