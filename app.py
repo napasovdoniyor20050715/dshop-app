@@ -157,14 +157,7 @@ def logout():
     flash('Tizimdan chiqdingiz.', 'success')
     return redirect(url_for('login'))
 
-# === VAQTINCHALIK — ishlatib bo'lgach O'CHIRISH KERAK ===
-@app.route('/change-admin-pass')
-def change_admin_pass():
-    user = User.query.filter_by(username='admin').first()
-    user.password = generate_password_hash('D000rC0der05')
-    db.session.commit()
-    return 'Parol almashtirildi!'
-# shu yergacha
+
 @app.route('/')
 def index():
     if 'user_id' not in session:
